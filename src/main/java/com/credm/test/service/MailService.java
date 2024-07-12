@@ -8,12 +8,8 @@ import com.credm.test.models.EmailModel;
 import com.credm.test.models.ResponseMessage;
 import com.credm.test.models.Vendor;
 
-@Service
+
 public interface MailService {
-
-
 	ResponseMessage sendVendorEmails(List<Vendor> vendorList);
-
 	List<EmailModel> getVendorMailsList();
-	
 }

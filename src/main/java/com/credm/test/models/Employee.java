@@ -16,17 +16,18 @@ import lombok.Data;
 @Table(name = "employee")
 
 public class Employee implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "emp_id")
 	Long empId;
-	
+
 	private String name;
 	private String designation;
 	private String ctc;
+	@Column(unique = true)
 	private String email;
 
 }

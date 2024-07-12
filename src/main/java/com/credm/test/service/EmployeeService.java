@@ -18,6 +18,11 @@ public class EmployeeService {
 
 	public ResponseMessage addEmployee(Employee model) {
 		try {
+			  if (empRepo.findByEmail(model.getEmail()).isPresent()) {
+	                return ResponseMessage.builder()
+	                    .errorCode(Constants.ErrorCodes.EXISTS)
+	                    .errorMessage("Email already exists").build();
+	            }
 			empRepo.save(model);
 			return ResponseMessage.builder()
 				.errorCode(Constants.ErrorCodes.SUCCESS)

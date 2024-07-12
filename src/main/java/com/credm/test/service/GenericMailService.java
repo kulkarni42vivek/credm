@@ -3,6 +3,7 @@ package com.credm.test.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.credm.test.config.Constants;
 import com.credm.test.models.EmailModel;
@@ -11,6 +12,7 @@ import com.credm.test.models.Vendor;
 import com.credm.test.repo.EmailRepo;
 import com.credm.test.repo.VendorRepo;
 
+@Service
 public class GenericMailService implements MailService {
 
 	@Autowired
