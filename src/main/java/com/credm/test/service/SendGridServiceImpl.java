@@ -1,73 +1,82 @@
 //package com.credm.test.service;
 //
+//import java.time.LocalDateTime;
+//import java.util.HashMap;
 //import java.util.List;
+//import java.util.Map;
 //
 //import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.web.client.RestTemplate;
 //
 //import com.credm.test.config.Constants;
-//import com.credm.test.exception.CustomMailException;
 //import com.credm.test.models.EmailModel;
 //import com.credm.test.models.ResponseMessage;
 //import com.credm.test.models.Vendor;
 //import com.credm.test.repo.EmailRepo;
 //import com.credm.test.repo.VendorRepo;
-//import com.sendgrid.Method;
-//import com.sendgrid.Request;
-//import com.sendgrid.Response;
-//import com.sendgrid.SendGrid;
-//import com.sendgrid.helpers.mail.Mail;
-//import com.sendgrid.helpers.mail.objects.Content;
-//import com.sendgrid.helpers.mail.objects.Email;
 //
-//public class SendGridServiceImpl  implements MailService{
-//	
+//public class SendGridServiceImpl implements MailService {
+//
 //	@Autowired
 //	VendorRepo venderRepo;
 //
 //	@Autowired
 //	EmailRepo emailRepo;
-//	
-//	@Value("${sendgrid.api.key}")
-//	private String sendGridApiKey;
+//
+//	private static final String EMAIL_SERVICE = "https://mock-email/send";
+//
+//	@Autowired
+//	RestTemplate resttemplate;
 //
 //	@Override
 //	public ResponseMessage sendVendorEmails(List<Vendor> vendorList) {
 //		try {
-//			
-//			for(Vendor vendor: vendorList) {
-//				
+//			for (Vendor vendor : vendorList) {
+//				Vendor vendorObj = venderRepo.getReferenceById(vendor.getVendorId());
 //				StringBuilder Content = new StringBuilder();
-//				Content = Content.append("Sending payments to vendor").append(vendor.getName()).append(" at upi ")
-//						.append(vendor.getUpi());
+//				Content = Content.append("Sending payments to vendor").append(vendorObj.getName()).append(" at upi ")
+//						.append(vendorObj.getUpi());
 //
-//				Email from = new Email("");
-//				Email toEmail = new Email(vendor.getEmail());
-//				Content emailContent = new Content("text/plain", Content.toString());
-//				Mail mail = new Mail(from, "Mail sub", toEmail, emailContent);
-//				SendGrid sg = new SendGrid(sendGridApiKey);
-//				Request request = new Request();
-//				request.setMethod(Method.POST);
-//				request.setEndpoint("mail/send");
-//				request.setBody(mail.build());
-//				Response response = sg.api(request);
-//				System.out.println(response.getStatusCode());
-//				System.out.println(response.getBody());
+//				Map<String, String> emailPayload = new HashMap<>();
+//				emailPayload.put("to", vendorObj.getEmail());
+//				emailPayload.put("subject", "Payment Notification");
+//				emailPayload.put("body", Content.toString());
 //
-//				EmailModel emailSent = EmailModel.builder().email_id(vendor.getEmail())
-//						.vendor(vendor.getVendorId()).build();
+//				try {
+//					ResponseEntity<ResponseMessage> response = resttemplate.postForEntity(EMAIL_SERVICE, emailPayload,
+//							ResponseMessage.class);
 //
-//				emailRepo.save(emailSent);
+//					HttpStatus statusCode = (HttpStatus) response.getStatusCode();
+//					if (statusCode == HttpStatus.OK) {
+//						ResponseMessage responseBody = response.getBody();
+//						EmailModel emailSent = EmailModel.builder().email(Content.toString()).vendor(vendorObj.getVendorId())
+//								.build();
+//						emailRepo.save(emailSent);
+//					} else {
+//						System.out.println("Failed to send email to ");
+//					}
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
 //			}
-//
 //			return ResponseMessage.builder().errorCode(Constants.ErrorCodes.SUCCESS).errorMessage("Success").build();
-//		} catch (CustomMailException e) {
-//			return ResponseMessage.builder().errorCode(Constants.ErrorCodes.ERROR)
-//					.errorMessage("Error while Sending Email").build();
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //			return ResponseMessage.builder().errorCode(Constants.ErrorCodes.ERROR)
 //					.errorMessage("Error while Sending Email").build();
+//		}
+//	}
+//
+//	@Override
+//	public List<EmailModel> getVendorMailsList() {
+//		try {
+//			return emailRepo.findAll();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
 //		}
 //	}
 //}
