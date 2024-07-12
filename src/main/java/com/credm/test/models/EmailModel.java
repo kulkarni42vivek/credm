@@ -1,5 +1,7 @@
 package com.credm.test.models;
 
+import java.sql.Timestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +25,7 @@ public class EmailModel {
 	Long mailID;
 
 	private Long vendor;
-	private String email_id;
+	private String email;
+	private Timestamp createdDate;
 	
 }

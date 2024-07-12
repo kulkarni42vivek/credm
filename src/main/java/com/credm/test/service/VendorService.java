@@ -27,12 +27,6 @@ public class VendorService {
 	@Autowired
 	VendorRepo venderRepo;
 
-	@Autowired
-	EmailRepo emailRepo;
-
-	@Value("${sendgrid.api.key}")
-	private String sendGridApiKey;
-
 	public ResponseMessage addVendor(Vendor model) {
 		try {
 			venderRepo.save(model);
@@ -52,41 +46,4 @@ public class VendorService {
 			return null;
 		}
 	}
-
-	public ResponseMessage sendVendorEmail(Vendor model) {
-		try {
-			Vendor vendorDetails = venderRepo.getReferenceById(model.getVendorId());
-
-			StringBuilder Content = new StringBuilder();
-			Content = Content.append("Sending payments to vendor").append(vendorDetails.getName()).append(" at upi ")
-					.append(vendorDetails.getUpi());
-
-			Email from = new Email("");
-			Email toEmail = new Email(vendorDetails.getEmail());
-			Content emailContent = new Content("text/plain", Content.toString());
-			Mail mail = new Mail(from, "Mail sub", toEmail, emailContent);
-			SendGrid sg = new SendGrid(sendGridApiKey);
-			Request request = new Request();
-			request.setMethod(Method.POST);
-			request.setEndpoint("mail/send");
-			request.setBody(mail.build());
-			Response response = sg.api(request);
-			System.out.println(response.getStatusCode());
-			System.out.println(response.getBody());
-
-			EmailModel emailSent = EmailModel.builder().email_id(vendorDetails.getEmail())
-					.vendor(vendorDetails.getVendorId()).build();
-
-			emailRepo.save(emailSent);
-			return ResponseMessage.builder().errorCode(Constants.ErrorCodes.SUCCESS).errorMessage("Success").build();
-		} catch (CustomMailException e) {
-			return ResponseMessage.builder().errorCode(Constants.ErrorCodes.ERROR)
-					.errorMessage("Error while Sending Email").build();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseMessage.builder().errorCode(Constants.ErrorCodes.ERROR)
-					.errorMessage("Error while Sending Email").build();
-		}
-	}
-
 }

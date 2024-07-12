@@ -24,9 +24,6 @@ public class VendorController {
 
 	@Autowired
 	VendorService vendorService;
-	
-	@Autowired
-	MailService mailService;
 
 	@PostMapping(value = "/addVendor")
 	public ResponseEntity<ResponseMessage> addVendor(@RequestBody Vendor model) {
@@ -43,24 +40,13 @@ public class VendorController {
 	@GetMapping("/getVendorData")
 	public ResponseEntity<List<Vendor>> getVendorData() {
 		List<Vendor> vendData = vendorService.getVendorData();
-		if (vendData!= null && vendData.size() > 0) {
+		if (vendData!= null && !vendData.isEmpty()) {
 			return ResponseEntity.ok(vendData);
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 	}
 
-	@PostMapping(value = "/sendVendorEmail")
-	public ResponseEntity<ResponseMessage> sendVendorEmail(@RequestBody Vendor model) {
-		ResponseMessage responseMessage ;
-		responseMessage = vendorService.sendVendorEmail(model);
-		if(responseMessage.getErrorCode() == 3000) {
-			return new ResponseEntity<ResponseMessage>(responseMessage, HttpStatus.OK);
-		}
-		else {
-			return new ResponseEntity<ResponseMessage>(responseMessage, HttpStatus.UNAUTHORIZED);
-		}
-	}
 	
 	
 }
