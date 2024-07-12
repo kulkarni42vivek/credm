@@ -40,4 +40,14 @@ public class GenericMailService implements MailService {
 		}
 	}
 
+	@Override
+	public List<EmailModel> getVendorMailsList() {
+		try {
+			return emailRepo.findAll();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 }
