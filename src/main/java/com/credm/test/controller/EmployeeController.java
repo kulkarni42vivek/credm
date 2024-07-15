@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.credm.test.config.Constants;
 import com.credm.test.models.Employee;
 import com.credm.test.models.ResponseMessage;
 import com.credm.test.service.EmployeeService;
@@ -27,7 +28,7 @@ public class EmployeeController {
 	public ResponseEntity<ResponseMessage> addEmployee(@RequestBody Employee model) {
 		ResponseMessage responseMessage ;
 		responseMessage = empService.addEmployee(model);
-		if(responseMessage.getErrorCode() == 3000) {
+		if(responseMessage.getErrorCode() == Constants.ErrorCodes.SUCCESS) {
 			return new ResponseEntity<ResponseMessage>(responseMessage, HttpStatus.OK);
 		}
 		else {
