@@ -39,11 +39,15 @@ public class EmployeeController {
 	@GetMapping("/getEmpdata")
 	public ResponseEntity<List<Employee>> getEmpdata() {
 		List<Employee> empData = empService.getEmpdata();
-		if (empData!= null && empData.size() > 0) {
-			return ResponseEntity.ok(empData);
-		} else {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
+//		if (empData!= null && empData.size() > 0) {
+//			return ResponseEntity.ok(empData);
+//		}
+//		else {
+//			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+//		}
+		
+		
+		return ResponseEntity.ok(empData);
 	}
 
 }
